@@ -54,7 +54,9 @@ export default async function setter(
     const instruction = new TransactionInstruction({
       keys: [{pubkey: greeterPublicKey, isSigner: false, isWritable: true}],
       programId: programKey,
-      data: createIncrementInstruction(),
+      data: createSetInstruction(999),
+      // data: createIncrementInstruction(),
+      // data: createDecrementInstruction(),
     });
 
     // this your turn to figure out

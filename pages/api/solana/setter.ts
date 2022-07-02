@@ -8,6 +8,31 @@ import {
 } from '@solana/web3.js';
 import type {NextApiRequest, NextApiResponse} from 'next';
 import {getNodeURL} from '@figment-solana/lib';
+import {Buffer} from 'buffer';
+import * as BufferLayout from '@solana/buffer-layout';
+
+function createIncrementInstruction(): Buffer {
+  const layout = BufferLayout.struct([BufferLayout.u8('instruction')]);
+  const data = Buffer.alloc(layout.span);
+  layout.encode({instruction: 0}, data);
+  return data;
+}
+function createDecrementInstruction(): Buffer {
+  const layout = BufferLayout.struct([BufferLayout.u8('instruction')]);
+  const data = Buffer.alloc(layout.span);
+  layout.encode({instruction: 1}, data);
+  return data;
+}
+
+function createSetInstruction(val: number): Buffer {
+  const layout = BufferLayout.struct([
+    BufferLayout.u8('instruction'),
+    BufferLayout.u32('value'),
+  ]);
+  const data = Buffer.alloc(layout.span);
+  layout.encode({instruction: 2, value: val}, data);
+  return data;
+}
 
 export default async function setter(
   req: NextApiRequest,
@@ -29,7 +54,7 @@ export default async function setter(
     const instruction = new TransactionInstruction({
       keys: [{pubkey: greeterPublicKey, isSigner: false, isWritable: true}],
       programId: programKey,
-      data: Buffer.alloc(0),
+      data: createIncrementInstruction(),
     });
 
     // this your turn to figure out
